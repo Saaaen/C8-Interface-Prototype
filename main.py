@@ -1,6 +1,6 @@
 from Planner import PlannerAgent
 from autogen import UserProxyAgent
-key_dept = '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'
+key_dept = ''
 
 
 
