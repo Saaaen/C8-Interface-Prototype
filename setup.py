@@ -6,7 +6,7 @@ setup(
     author='Saen Chen',  # Optional: your name or your organization's name
     author_email='saenc2@berkeley.edu',  # Optional: your email address
     description='A prototype of C8 Interface',  # Optional: a short description of the package
-    url='https://github.com/Saaaen/C8-Interface-Prototype',  # Optional: the project home page
+    url='https://github.com/Saaaen/C8InterfacePrototype',  # Optional: the project home page
     packages=find_packages(),  # Automatically find and include all packages
     classifiers=[
         'Development Status :: 3 - Alpha',  # Change as appropriate
