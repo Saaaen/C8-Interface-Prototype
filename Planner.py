@@ -1,4 +1,4 @@
-import autogen
+import autogen, openai
 from typing import Any, Dict, List, Optional, Union
 from FunctionFinderAgent import FunctionFinderAgent
 import pandas as pd
@@ -10,32 +10,35 @@ not just the specific example provided. The response format should include a gen
 [{
 "request" : "", //A native text description of the Function required
 "inputs" : [""], //Inputs to be provided to the Function
-"outputs" : [""], //Outputs to be returned by the Function
-"keywords" : [""], //keywords, specific algorithms or other names
+"type": String. Data type of input (e.g., "str")
+"description": String. Role of the input.
+"outputs": List of objects with:
+"type": String. Data type of output
+"description": String. Meaning of the output.
 }]
 """
-
-data = [['translate', 'Translate the DNA sequence into a protein sequence, based on the codon table'], ['reverse complement 1', 'Generate the reverse complement of the DNA sequence'],['getPlasmidSequence', 'Generate the reverse complement of the DNA sequence']]
+data = [['translate', 'Translate the DNA sequence into a protein sequence, based on the codon table'], ['reverse complement', 'Generate the reverse complement of the DNA sequence'],['getPlasmidSequence', 'Generate the reverse complement of the DNA sequence'],
+        ['dna_validator', 'Validates if the given sequence is a valid DNA sequence.'], ['dna_to_rna', 'Converts a DNA sequence to an RNA sequence']]
 dummies = [[f'dummy{i}', f'dummy{i}'] for i in range(50)]
 data += dummies
 df = pd.DataFrame(data, columns=['Name', 'Description'])
 df["combined"] = (
     "Name: " + df.Name.str.strip() + "; Description: " + df.Description.str.strip()
 )
-df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine='text-embedding-ada-002'))
+df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine="text-embedding-ada-002"))
 
 
 def ask_to_find(message, availiable_functions, config):
   funcFinder = FunctionFinderAgent(availiable_functions, config)
   expert = autogen.UserProxyAgent(
         name="expert",
-        human_input_mode="NEVER",
+        system_message = 'You provide the other agent a request and the other agent will find a function for it. Once you recevie the function name, stop reply and end the chat',
+        human_input_mode="AlWAYS",
         code_execution_config={"last_n_messages": 3, "work_dir": "expert", "use_docker": False,},
 
     )
   expert.initiate_chat(funcFinder, message=message)
-  #expert.stop_reply_at_receive(funcFinder)
-  #expert.send("summarize the suggestions", funcFinder)
+  expert.stop_reply_at_receive(funcFinder)
   return None
 class PlannerAgent(autogen.AssistantAgent):
   config: Dict
@@ -63,6 +66,7 @@ class PlannerAgent(autogen.AssistantAgent):
     local_vars = {"reply": reply}
     exec('reply_list='+reply, {}, local_vars)
     reply_list = local_vars["reply_list"]
+    print(reply_list)
     #Loop through the tools
     for r in reply_list:
       ask_to_find(r['request'], df, self.config)

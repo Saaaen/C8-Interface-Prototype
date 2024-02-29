@@ -1,6 +1,18 @@
 from autogen import UserProxyAgent
 import autogen
 from typing import Any, Dict, List, Optional, Union
+import shelve
+from validate_dna import DNASequenceModel, ValidateDNASequenceFunction, ConvertDNAToRNAFunction
+
+dna_sequence = DNASequenceModel(sequence="ATGCGA")
+validator = ValidateDNASequenceFunction()
+converter = ConvertDNAToRNAFunction()
+# Store the instance in shelve
+with shelve.open('translator_shelve') as db:
+    db['dna_validator'] = validator
+    db['dna_to_rna'] = converter
+del validator
+del converter
 
 sys_msg_exec = """Read the function description and the request. Extract proper input value from the request.
                   Execute the function and report the result."""
@@ -22,4 +34,11 @@ class Executor(UserProxyAgent):
       sender: Optional[autogen.Agent] = None,
       config: Optional[Any] = None,
   ) -> Union[str, Dict, None]:
+    message = messages[-1]
+    funcName = message['content']
+    dna_sequence = DNASequenceModel(sequence = 'ATGCTAGCTAG')
+    with shelve.open('translator_shelve') as db:
+      func = db[funcName]
+      result = func.run(dna_sequence)
+      print('result: ' + str(result))
     return True, None

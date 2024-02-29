@@ -1,8 +1,9 @@
 from autogen import AssistantAgent, ConversableAgent, Agent
-from embeddings_utils import get_embedding, cosine_similarity
+from openai.embeddings_utils import get_embedding, cosine_similarity
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd
-
+import openai
+import ExecutorAgent
 
 sys_msg = """You suggest the best option for a given request from a list. Reply None if you think none of the availiabe functions work. You don't write code.
 You should only reply with a function name."""
@@ -44,4 +45,6 @@ class FunctionFinderAgent(AssistantAgent):
     reply = self.generate_reply([result_dict] + [message], sender, exclude=[FunctionFinderAgent._generate_ffa_reply])
     func_reply = reply if isinstance(reply, str) else str(reply["content"])
     print('suggest function: ' + func_reply)
+    executor = ExecutorAgent.Executor()
+    self.initiate_chat(executor, message=func_reply)
     return True, None
