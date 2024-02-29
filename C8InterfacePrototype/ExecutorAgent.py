@@ -2,11 +2,11 @@ from autogen import UserProxyAgent
 import autogen
 from typing import Any, Dict, List, Optional, Union
 import shelve
-from validate_dna import DNASequenceModel, ValidateDNASequenceFunction, ConvertDNAToRNAFunction
+from C8InterfacePrototype import validate_dna 
 
-dna_sequence = DNASequenceModel(sequence="ATGCGA")
-validator = ValidateDNASequenceFunction()
-converter = ConvertDNAToRNAFunction()
+dna_sequence = validate_dna.DNASequenceModel(sequence="ATGCGA")
+validator = validate_dna.ValidateDNASequenceFunction()
+converter = validate_dna.ConvertDNAToRNAFunction()
 # Store the instance in shelve
 with shelve.open('translator_shelve') as db:
     db['dna_validator'] = validator
@@ -36,7 +36,7 @@ class Executor(UserProxyAgent):
   ) -> Union[str, Dict, None]:
     message = messages[-1]
     funcName = message['content']
-    dna_sequence = DNASequenceModel(sequence = 'ATGCTAGCTAG')
+    dna_sequence = validate_dna.DNASequenceModel(sequence = 'ATGCTAGCTAG')
     with shelve.open('translator_shelve') as db:
       func = db[funcName]
       result = func.run(dna_sequence)
