@@ -6,8 +6,6 @@ setup(
     author='Saen Chen',  # Optional: your name or your organization's name
     author_email='saenc2@berkeley.edu',  # Optional: your email address
     description='A prototype of C8 Interface',  # Optional: a short description of the package
-    long_description=open('README.md').read(),  # Optional: a long description from README.md
-    long_description_content_type='text/markdown',  # Required if using a markdown file as long description
     url='https://github.com/Saaaen/C8-Interface-Prototype',  # Optional: the project home page
     packages=find_packages(),  # Automatically find and include all packages
     classifiers=[
