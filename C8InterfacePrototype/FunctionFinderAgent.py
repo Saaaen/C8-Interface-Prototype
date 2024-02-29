@@ -3,7 +3,7 @@ from openai.embeddings_utils import get_embedding, cosine_similarity
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd
 import openai
-import ExecutorAgent
+from . import ExecutorAgent
 
 sys_msg = """You suggest the best option for a given request from a list. Reply None if you think none of the availiabe functions work. You don't write code.
 You should only reply with a function name."""
