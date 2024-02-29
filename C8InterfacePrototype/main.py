@@ -3,7 +3,7 @@ from autogen import UserProxyAgent
 
 
 
-def func(key, prompt):
+def func(key, prompt, availiable_funcs):
     config_list_4 = [
         {
             'model': 'gpt-4',
@@ -15,7 +15,7 @@ def func(key, prompt):
         "config_list": config_list_4,
         "timeout": 120,
     }
-    plannerAgent = PlannerAgent(gpt4_config)
+    plannerAgent = PlannerAgent(gpt4_config, availiable_funcs)
     #User Proxy
     user_proxy = UserProxyAgent(
         name="Admin",

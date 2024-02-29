@@ -1,8 +1,6 @@
-import autogen, openai
+import autogen
 from typing import Any, Dict, List, Optional, Union
 from .FunctionFinderAgent import FunctionFinderAgent
-import pandas as pd
-from openai.embeddings_utils import get_embedding
 
 sys_msg_p = """
 Suggest a plan. The plan should a set of functions needed to perform the task step-by-step described by the given Prompt. These functions should be expressed in a way that makes them applicable to a broad range of similar tasks,
@@ -17,16 +15,6 @@ not just the specific example provided. The response format should include a gen
 "description": String. Meaning of the output.
 }]
 """
-data = [['translate', 'Translate the DNA sequence into a protein sequence, based on the codon table'], ['reverse complement', 'Generate the reverse complement of the DNA sequence'],['getPlasmidSequence', 'Generate the reverse complement of the DNA sequence'],
-        ['dna_validator', 'Validates if the given sequence is a valid DNA sequence.'], ['dna_to_rna', 'Converts a DNA sequence to an RNA sequence']]
-dummies = [[f'dummy{i}', f'dummy{i}'] for i in range(50)]
-data += dummies
-df = pd.DataFrame(data, columns=['Name', 'Description'])
-df["combined"] = (
-    "Name: " + df.Name.str.strip() + "; Description: " + df.Description.str.strip()
-)
-df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine="text-embedding-ada-002"))
-
 
 def ask_to_find(message, availiable_functions, config):
   funcFinder = FunctionFinderAgent(availiable_functions, config)
@@ -42,7 +30,7 @@ def ask_to_find(message, availiable_functions, config):
   return None
 class PlannerAgent(autogen.AssistantAgent):
   config: Dict
-  def __init__(self, config):
+  def __init__(self, config, availiable_funcs):
     super().__init__(
             name="PlannerAgent",
             system_message=sys_msg_p,
@@ -51,6 +39,7 @@ class PlannerAgent(autogen.AssistantAgent):
         )
     self.register_reply(autogen.ConversableAgent, PlannerAgent._generate_pa_reply)
     self.config = config
+    self.availiable_funcs = availiable_funcs
   def _generate_pa_reply(
         self,
         messages: Optional[List[Dict]] = None,
@@ -69,5 +58,5 @@ class PlannerAgent(autogen.AssistantAgent):
     print(reply_list)
     #Loop through the tools
     for r in reply_list:
-      ask_to_find(r['request'], df, self.config)
+      ask_to_find(r['request'], self.availiable_funcs, self.config)
     return True, None
