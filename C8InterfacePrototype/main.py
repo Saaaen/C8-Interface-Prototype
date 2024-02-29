@@ -1,4 +1,4 @@
-from Planner import PlannerAgent
+from .Planner import PlannerAgent
 from autogen import UserProxyAgent
 
 

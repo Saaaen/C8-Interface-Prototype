@@ -1,6 +1,6 @@
 import autogen, openai
 from typing import Any, Dict, List, Optional, Union
-from FunctionFinderAgent import FunctionFinderAgent
+from .FunctionFinderAgent import FunctionFinderAgent
 import pandas as pd
 from openai.embeddings_utils import get_embedding
 

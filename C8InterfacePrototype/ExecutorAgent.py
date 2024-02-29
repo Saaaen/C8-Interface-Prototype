@@ -2,7 +2,7 @@ from autogen import UserProxyAgent
 import autogen
 from typing import Any, Dict, List, Optional, Union
 import shelve
-from validate_dna import DNASequenceModel, ValidateDNASequenceFunction, ConvertDNAToRNAFunction
+from .validate_dna import DNASequenceModel, ValidateDNASequenceFunction, ConvertDNAToRNAFunction
 
 dna_sequence = DNASequenceModel(sequence="ATGCGA")
 validator = ValidateDNASequenceFunction()
