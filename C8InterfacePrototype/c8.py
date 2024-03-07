@@ -3,7 +3,7 @@ from autogen import UserProxyAgent
 
 
 
-def func(key, prompt, availiable_funcs):
+def run(key, prompt, availiable_funcs):
     config_list_4 = [
         {
             'model': 'gpt-4',
@@ -25,3 +25,6 @@ def func(key, prompt, availiable_funcs):
     )
     user_proxy.initiate_chat(plannerAgent, message=prompt,
 )
+    
+def load_function(func_name, func_description):
+    pass
