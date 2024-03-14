@@ -41,4 +41,13 @@ def run(key, prompt):
 )
     
 def load_function(func_name, func_description):
-    pass
+    new_func = pd.DataFrame({
+    'Name': [func_name], 
+    'Description': [func_description], 
+    'combined': ["Name: " + func_name.strip() + "; Description: " + func_description.strip()]
+})
+    df = df.append(new_func, ignore_index=True) 
+
+
+def show_available_functions():
+    print(df)
