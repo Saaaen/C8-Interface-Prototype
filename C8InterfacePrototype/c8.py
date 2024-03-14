@@ -3,7 +3,7 @@ from autogen import UserProxyAgent
 from openai.embeddings_utils import get_embedding, cosine_similarity
 import pandas as pd
 import openai
-
+import shelve
 
 data = [['dna_to_protein', 'Translate the DNA sequence into a protein sequence, based on the codon table'], ['reverse complement', 'Generate the reverse complement of the DNA sequence'],['getPlasmidSequence', 'Generate the reverse complement of the DNA sequence'],
         ['dna_validator', 'Validates if the given sequence is a valid DNA sequence.'], ['dna_to_rna', 'Converts a DNA sequence to an RNA sequence'], ['rna_to_protein', 'Converts a RNA sequence to an protein sequence'], ['cloneExperimentDesign', 'Frist retrieve the sequence of plasmid, then identify the location of amilGFp']]
@@ -13,6 +13,9 @@ df = pd.DataFrame(data, columns=['Name', 'Description'])
 df["combined"] = (
     "Name: " + df.Name.str.strip() + "; Description: " + df.Description.str.strip()
 )
+
+with shelve.open('available_func_shelve') as db:
+    db['available_funcs'] = df
 
 def run(key, prompt):
     config_list_4 = [
@@ -39,14 +42,19 @@ def run(key, prompt):
     user_proxy.initiate_chat(plannerAgent, message=prompt,
 )
     
-def load_function(func_name, func_description, curr_df = df):
+def load_function(func_name, func_description):
     new_func = pd.DataFrame({
     'Name': [func_name], 
     'Description': [func_description], 
     'combined': ["Name: " + func_name.strip() + "; Description: " + func_description.strip()]
 })
-    curr_df = curr_df.append(new_func, ignore_index=True) 
+    with shelve.open('translator_shelve') as db:
+        available_funcs = db['available_funcs']
+        available_funcs = available_funcs.append(new_func, ignore_index=True)
+        db['available_funcs'] = available_funcs
 
 
 def show_available_functions():
-    print(df[['Name', 'Description']])
+    with shelve.open('translator_shelve') as db:
+        available_funcs = db['available_funcs']
+        print(available_funcs[['Name', 'Description']])
