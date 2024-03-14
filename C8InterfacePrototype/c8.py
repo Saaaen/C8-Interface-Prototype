@@ -27,8 +27,7 @@ def run(key, prompt):
         "timeout": 120,
     }
     openai.api_key = key
-    if "embedding" not in df:
-        df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine="text-embedding-ada-002"))
+    df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine="text-embedding-ada-002"))
     plannerAgent = PlannerAgent(gpt4_config, df)
     #User Proxy
     user_proxy = UserProxyAgent(
@@ -50,4 +49,4 @@ def load_function(func_name, func_description):
 
 
 def show_available_functions():
-    print(df)
+    print(df[['Name', 'Description']])

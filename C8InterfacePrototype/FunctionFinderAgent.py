@@ -40,6 +40,7 @@ class FunctionFinderAgent(AssistantAgent):
         .head(4)
         .Name
     )
+    df.drop('similarity', axis=1, inplace=True)
     results = results.tolist()
     result_dict = {'content': 'avaliable functions: ' + str(results), 'role': 'assistant'}
     reply = self.generate_reply([result_dict] + [message], sender, exclude=[FunctionFinderAgent._generate_ffa_reply])
