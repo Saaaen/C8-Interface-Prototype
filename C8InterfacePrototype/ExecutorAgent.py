@@ -8,11 +8,6 @@ dna_sequence = DNASequenceModel(sequence="ATGCGA")
 validator = ValidateDNASequenceFunction()
 converter = ConvertDNAToRNAFunction()
 # Store the instance in shelve
-with shelve.open('translator_shelve') as db:
-    db['dna_validator'] = validator
-    db['dna_to_rna'] = converter
-del validator
-del converter
 
 sys_msg_exec = """Read the function description and the request. Extract proper input value from the request.
                   Execute the function and report the result."""

@@ -48,13 +48,13 @@ def load_function(func_name, func_description):
     'Description': [func_description], 
     'combined': ["Name: " + func_name.strip() + "; Description: " + func_description.strip()]
 })
-    with shelve.open('translator_shelve') as db:
+    with shelve.open('available_func_shelve') as db:
         available_funcs = db['available_funcs']
         available_funcs = available_funcs.append(new_func, ignore_index=True)
         db['available_funcs'] = available_funcs
 
 
 def show_available_functions():
-    with shelve.open('translator_shelve') as db:
+    with shelve.open('available_func_shelve') as db:
         available_funcs = db['available_funcs']
         print(available_funcs[['Name', 'Description']])
