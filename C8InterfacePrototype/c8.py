@@ -39,13 +39,13 @@ def run(key, prompt):
     user_proxy.initiate_chat(plannerAgent, message=prompt,
 )
     
-def load_function(func_name, func_description):
+def load_function(func_name, func_description, curr_df = df):
     new_func = pd.DataFrame({
     'Name': [func_name], 
     'Description': [func_description], 
     'combined': ["Name: " + func_name.strip() + "; Description: " + func_description.strip()]
 })
-    df = df.append(new_func, ignore_index=True) 
+    curr_df = curr_df.append(new_func, ignore_index=True) 
 
 
 def show_available_functions():
