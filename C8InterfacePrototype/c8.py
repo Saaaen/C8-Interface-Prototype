@@ -42,16 +42,20 @@ def run(key, prompt):
     user_proxy.initiate_chat(plannerAgent, message=prompt,
 )
     
-def load_function(func_name, func_description):
+def load_function(func_name, func_description, func_instance):
     new_func = pd.DataFrame({
     'Name': [func_name], 
     'Description': [func_description], 
     'combined': ["Name: " + func_name.strip() + "; Description: " + func_description.strip()]
 })
     with shelve.open('available_func_shelve') as db:
+        if func_name in db:
+            print('function already exists')
+            return
         available_funcs = db['available_funcs']
         available_funcs = available_funcs.append(new_func, ignore_index=True)
         db['available_funcs'] = available_funcs
+        db[func_name] = func_instance
 
 
 def show_available_functions():
